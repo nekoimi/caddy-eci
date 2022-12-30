@@ -6,4 +6,4 @@ FROM caddy:2.6.2-alpine
 
 LABEL maintainer="nekoimi <nekoimime@gmail.com>"
 
-COPY --forom=builder /usr/bin/caddy /usr/bin/caddy
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
