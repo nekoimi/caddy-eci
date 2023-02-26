@@ -1,11 +1,7 @@
-FROM caddy:2.6.2-builder-alpine AS builder
-
-ENV GOPROXY=https://proxy.golang.com.cn,direct
-
-RUN xcaddy build --with github.com/caddy-dns/alidns
-
-FROM caddy:2.6.2-alpine
+FROM caddy:2.6.4-alpine
 
 LABEL maintainer="nekoimi <nekoimime@gmail.com>"
 
-COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+COPY caddy_linux_amd64_cloudflare /usr/bin/caddy
+
+RUN chmod +x /usr/bin/caddy
