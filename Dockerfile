@@ -1,8 +1,9 @@
 FROM caddy/caddy:builder-alpine as builder
 
-ENV GOPROXY=https://goproxy.io,direct
+ENV GO111MODULE=on
+ENV GOPROXY=https://goproxy.cn,direct
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && apk update && apk add --no-cache git;
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && apk update && apk add --no-cache git;
 
 RUN xcaddy build \
     --with github.com/caddy-dns/alidns \
