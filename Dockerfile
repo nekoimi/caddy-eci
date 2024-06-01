@@ -1,5 +1,7 @@
 FROM caddy/caddy:builder-alpine as builder
 
+RUN apk add --no-cache git;
+
 RUN xcaddy build \
     --with github.com/caddy-dns/alidns \
     --with github.com/caddy-dns/cloudflare \
