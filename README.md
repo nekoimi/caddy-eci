@@ -1,8 +1,3 @@
-# caddy-proxy
+# caddy
 
-[Download](https://caddyserver.com/download)
-
-- caddy
-- alidns
-- replace-response
-- l4
+添加扩展功能

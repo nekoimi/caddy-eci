@@ -1,7 +1,13 @@
-FROM caddy:2.6.4-alpine
+FROM caddy/caddy:builder-alpine as builder
+
+RUN xcaddy build \
+    --with github.com/caddy-dns/alidns \
+    --with github.com/caddy-dns/cloudflare \
+    --with github.com/caddyserver/transform-encoder \
+    --with github.com/caddyserver/replace-response
+
+FROM caddy/caddy:alpine
 
 LABEL maintainer="nekoimi <nekoimime@gmail.com>"
 
-COPY caddy_linux_amd64_cloudflare /usr/bin/caddy
-
-RUN chmod +x /usr/bin/caddy
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
