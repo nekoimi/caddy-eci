@@ -2,15 +2,16 @@ kind: pipeline
 type: docker
 name: default
 
-trigger:
-  branch:
-  - master
-  event:
-  - push
-
 steps:
 - name: greeting
   image: alpine
   commands:
   - echo hello
   - echo world
+
+
+trigger:
+  branch:
+  - master
+  event:
+  - push
