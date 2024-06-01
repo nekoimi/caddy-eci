@@ -9,6 +9,7 @@ build-job:
     - master
   tags:
     - docker
+    - amd64
   script:
     - docker build -t $DOCKERHUB_IMAGE .
 push-job:
@@ -17,6 +18,7 @@ push-job:
     - master
   tags:
     - docker
+    - amd64
   script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_ACCESS_TOKEN
     - docker push $DOCKERHUB_IMAGE
