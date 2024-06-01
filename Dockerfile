@@ -1,5 +1,7 @@
 FROM caddy/caddy:builder-alpine as builder
 
+ENV GOPROXY=https://goproxy.io,direct
+
 RUN apk add --no-cache git;
 
 RUN xcaddy build \
