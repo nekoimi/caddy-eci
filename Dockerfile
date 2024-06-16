@@ -9,7 +9,8 @@ RUN xcaddy build \
     --with github.com/caddy-dns/alidns \
     --with github.com/caddy-dns/cloudflare \
     --with github.com/caddyserver/transform-encoder \
-    --with github.com/caddyserver/replace-response
+    --with github.com/caddyserver/replace-response \
+    --with github.com/mholt/caddy-webdav
 
 FROM caddy/caddy:alpine
 
