@@ -5,15 +5,13 @@ on:
   push:
     branches:
       - master
-    tags:
-      - "v*"
     paths-ignore:
       - README.md
       - docker-compose.yml
       - LICENSE
-    schedule:
-      # https://crontab.cronhub.io/
-      - cron: '00 5 * * 2'
+  schedule:
+    # https://crontab.cronhub.io/
+    - cron: '00 5 * * 2'
 
 jobs:
   build_and_push:
