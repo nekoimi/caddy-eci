@@ -20,7 +20,6 @@ services:
       - ./caddy_data:/data/caddy
     environment:
       K: V
-    privileged: true
     restart: always
 
 networks:
