@@ -9,6 +9,7 @@ Caddy 扩展镜像，预装了常用的 DNS 和实用插件。
 - **WebDAV**: 文件共享和同步
 - **响应修改**: 替换响应内容
 - **Nginx 配置兼容**: 支持 nginx 配置格式
+- **Docker 服务自动发现**: 根据容器 labels 自动生成并热加载反向代理配置
 
 ## 已安装插件
 
@@ -22,6 +23,7 @@ Caddy 扩展镜像，预装了常用的 DNS 和实用插件。
 | [replace-response](https://github.com/caddyserver/replace-response) | 响应内容替换 |
 | [transform-encoder](https://github.com/caddyserver/transform-encoder) | 日志转换编码器 |
 | [nginx-adapter](https://github.com/caddyserver/nginx-adapter) | Nginx 配置适配器 |
+| [caddy-docker-proxy](https://github.com/lucaslorentz/caddy-docker-proxy) | 通过 Docker labels 自动配置 Caddy |
 
 ## 镜像地址
 
@@ -33,7 +35,6 @@ Caddy 扩展镜像，预装了常用的 DNS 和实用插件。
 ### Docker Compose
 
 ```yaml
-version: "3.6"
 services:
   caddy-eci:
     image: ghcr.io/nekoimi/caddy-eci:latest
@@ -47,14 +48,49 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy_data:/data/caddy
+      - ./caddy_config:/config/caddy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      - CLOUDFLARE_API_TOKEN=your_token_here
-    restart: always
+      CLOUDFLARE_API_TOKEN: your_token_here
+      CADDY_DOCKER_CADDYFILE_PATH: /etc/caddy/Caddyfile
+      CADDY_INGRESS_NETWORKS: caddy-eci-net
+    restart: unless-stopped
 
 networks:
   caddy-eci-net:
-    driver: bridge
+    external: true
 ```
+
+首次部署前创建共享网络：
+
+```shell
+docker network create caddy-eci-net
+```
+
+`CADDY_DOCKER_CADDYFILE_PATH` 指向基础 Caddyfile。基础文件中的全局配置、非 Docker
+上游和复杂路由会被保留，容器 labels 生成的站点会追加到该配置中。
+
+### 自动发现服务
+
+将需要代理的服务接入同一个外部网络，并添加 labels：
+
+```yaml
+services:
+  app:
+    image: nginx:alpine
+    networks:
+      - caddy-eci-net
+    labels:
+      caddy: app.example.com
+      caddy.reverse_proxy: "{{upstreams 80}}"
+
+networks:
+  caddy-eci-net:
+    external: true
+```
+
+启动或更新 `app` 后，Caddy 会自动发现容器并无中断地重新加载配置。生成后的完整
+Caddyfile 默认保存在 `/config/caddy/Caddyfile.autosave`。
 
 ### Caddyfile 示例
 
@@ -100,6 +136,8 @@ dav.example.com {
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API Token |
 | `ALIYUN_ACCESS_KEY_ID` | 阿里云 Access Key ID |
 | `ALIYUN_ACCESS_KEY_SECRET` | 阿里云 Access Key Secret |
+| `CADDY_DOCKER_CADDYFILE_PATH` | 需要与自动生成配置合并的基础 Caddyfile 路径 |
+| `CADDY_INGRESS_NETWORKS` | Caddy 与被代理容器共用的 Docker 网络，多个网络用逗号分隔 |
 
 ## License
 

@@ -1,4 +1,3 @@
-version: "3.6"
 services:
   caddy-eci:
     image: ghcr.io/nekoimi/caddy-eci:latest
@@ -11,10 +10,12 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./caddy_data:/data/caddy
+      - ./caddy_config:/config/caddy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      K: V
-    privileged: true
-    restart: always
+      CADDY_DOCKER_CADDYFILE_PATH: /etc/caddy/Caddyfile
+      CADDY_INGRESS_NETWORKS: caddy-eci-net
+    restart: unless-stopped
 
 networks:
   caddy-eci-net:

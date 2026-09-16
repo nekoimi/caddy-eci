@@ -6,6 +6,7 @@ FROM caddy/caddy:builder-alpine as builder
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && apk update && apk add --no-cache git;
 
 RUN xcaddy build \
+    --with github.com/lucaslorentz/caddy-docker-proxy/v2 \
     --with github.com/caddy-dns/alidns \
     --with github.com/caddy-dns/tencentcloud \
     --with github.com/caddy-dns/cloudflare \
@@ -20,3 +21,5 @@ FROM caddy/caddy:alpine
 LABEL maintainer="nekoimi <nekoimime@gmail.com>"
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+
+CMD ["caddy", "docker-proxy"]
